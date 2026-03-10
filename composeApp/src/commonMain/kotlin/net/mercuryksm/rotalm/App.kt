@@ -2,7 +2,9 @@ package net.mercuryksm.rotalm
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -10,6 +12,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.material3.BottomSheetScaffold
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -26,8 +29,24 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
+
+private val SheetVerticalPadding = 12.dp
+private val SheetHorizontalPadding = 16.dp
+private val SheetContentSpacing = 16.dp
+private val DragHandleHeight = 48.dp
+private val ButtonHeight = 40.dp
+private val TextLineHeight = 24.dp
+private val SheetPeekHeight: Dp =
+    SheetVerticalPadding +
+            DragHandleHeight +
+            SheetContentSpacing +
+            TextLineHeight +
+            SheetContentSpacing +
+            ButtonHeight +
+            SheetVerticalPadding
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -46,9 +65,11 @@ fun App() {
         BottomSheetScaffold(
             scaffoldState = scaffoldState,
             sheetContent = {
-                BottomSheetContent(cardIndex = selectedCardIndex ?: 0)
+                BottomSheetContent(
+                    cardIndex = selectedCardIndex ?: 0,
+                )
             },
-            sheetPeekHeight = 0.dp,
+            sheetPeekHeight = SheetPeekHeight,
         ) { innerPadding ->
             CardGrid(
                 modifier = Modifier
@@ -56,7 +77,7 @@ fun App() {
                     .padding(innerPadding),
                 onCardClick = { index ->
                     selectedCardIndex = index
-                    scope.launch { sheetState.expand() }
+                    scope.launch { sheetState.partialExpand() }
                 },
             )
         }
@@ -111,13 +132,31 @@ fun BottomSheetContent(
     cardIndex: Int,
     modifier: Modifier = Modifier,
 ) {
-    Box(
+    Column(
         modifier = modifier
             .fillMaxWidth()
-            .height(240.dp),
-        contentAlignment = Alignment.Center,
+            .fillMaxSize()
+            .padding(horizontal = SheetHorizontalPadding, vertical = SheetVerticalPadding),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(SheetContentSpacing),
     ) {
-        Text("Sheet for Card $cardIndex")
+        Text(
+            text = "Card $cardIndex",
+            modifier = Modifier.height(TextLineHeight),
+        )
+
+        Button(
+            onClick = {},
+            modifier = Modifier.height(ButtonHeight),
+        ) {
+            Text("Action A")
+        }
+
+        Spacer(modifier = Modifier.height(SheetContentSpacing))
+
+        Button(onClick = {}) {
+            Text("Action B (expanded only)")
+        }
     }
 }
 
@@ -131,7 +170,15 @@ private fun CardItemPreview() {
 
 @Preview
 @Composable
-private fun BottomSheetContentPreview() {
+private fun BottomSheetContentPartialPreview() {
+    MaterialTheme {
+        BottomSheetContent(cardIndex = 2)
+    }
+}
+
+@Preview
+@Composable
+private fun BottomSheetContentExpandedPreview() {
     MaterialTheme {
         BottomSheetContent(cardIndex = 2)
     }
