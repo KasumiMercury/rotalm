@@ -1,0 +1,24 @@
+CREATE TABLE activities (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    public_id TEXT NOT NULL UNIQUE,
+    name TEXT NOT NULL
+);
+
+insert:
+INSERT INTO activities (public_id, name)
+VALUES (?, ?);
+
+selectAll:
+SELECT * FROM activities;
+
+selectById:
+SELECT * FROM activities
+WHERE id = ?;
+
+selectByPublicId:
+SELECT * FROM activities
+WHERE public_id = ?;
+
+deleteById:
+DELETE FROM activities
+WHERE id = ?;

@@ -7,6 +7,7 @@ plugins {
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.composeHotReload)
+    alias(libs.plugins.sqldelight)
 }
 
 kotlin {
@@ -32,6 +33,7 @@ kotlin {
         androidMain.dependencies {
             implementation(libs.compose.uiToolingPreview)
             implementation(libs.androidx.activity.compose)
+            implementation(libs.sqldelight.androidDriver)
         }
         commonMain.dependencies {
             implementation(libs.compose.runtime)
@@ -42,6 +44,10 @@ kotlin {
             implementation(libs.compose.uiToolingPreview)
             implementation(libs.androidx.lifecycle.viewmodelCompose)
             implementation(libs.androidx.lifecycle.runtimeCompose)
+            implementation(libs.sqldelight.coroutinesExtensions)
+        }
+        iosMain.dependencies {
+            implementation(libs.sqldelight.nativeDriver)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
@@ -49,6 +55,7 @@ kotlin {
         jvmMain.dependencies {
             implementation(compose.desktop.currentOs)
             implementation(libs.kotlinx.coroutinesSwing)
+            implementation(libs.sqldelight.sqliteDriver)
         }
     }
 }
@@ -82,6 +89,14 @@ android {
 
 dependencies {
     debugImplementation(libs.compose.uiTooling)
+}
+
+sqldelight {
+    databases {
+        create("AppDatabase") {
+            packageName.set("net.mercuryksm.rotalm.db")
+        }
+    }
 }
 
 compose.desktop {
