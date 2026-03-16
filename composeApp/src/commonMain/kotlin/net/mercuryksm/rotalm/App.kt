@@ -32,6 +32,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
+import net.mercuryksm.rotalm.di.appModule
+import org.koin.compose.KoinApplication
+import org.koin.core.module.Module
+import org.koin.dsl.koinConfiguration
+import org.koin.dsl.module as koinModule
 
 private val SheetVerticalPadding = 12.dp
 private val SheetHorizontalPadding = 16.dp
@@ -50,7 +55,10 @@ private val SheetPeekHeight: Dp =
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun App() {
+fun App(platformModule: Module = koinModule {}) {
+    KoinApplication(configuration = koinConfiguration {
+        modules(platformModule, appModule)
+    }) {
     MaterialTheme {
         var selectedCardIndex: Int? by remember { mutableStateOf(null) }
         val scope = rememberCoroutineScope()
@@ -81,6 +89,7 @@ fun App() {
                 },
             )
         }
+    }
     }
 }
 
